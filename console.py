@@ -3,6 +3,7 @@
 import cmd
 import models
 
+
 class HBNBCommand(cmd.Cmd):
     """AirBnB Command Intepreter"""
     intro = "Welcome to AirBnB Console. (type help <topic>) for more info "
@@ -29,7 +30,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, args):
         """
-        Prints the string representation of an instance 
+        Prints the string representation of an instance
         based on the class name and id.
         Usage: show <class name> <id>
         """
@@ -48,7 +49,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_destroy(self, args):
         """
-            Deletes an instance based on the class name and id 
+            Deletes an instance based on the class name and id
             (saves the change into the JSON file).
             Usage: destroy <class name> <id>
         """
@@ -70,7 +71,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """
-        Prints all string representations of all instances based 
+        Prints all string representations of all instances based
         or not on the class name.
         Usage: all [<class name>]
         """
@@ -111,7 +112,6 @@ class HBNBCommand(cmd.Cmd):
         obj = models.storage.all()[k]
         setattr(obj, attr_name, val_str)
         models.storage.save()
-
 
     def do_quit(self, args):
         """exits the console. Usage: (Ctrl + D) or (type <quit>)"""
