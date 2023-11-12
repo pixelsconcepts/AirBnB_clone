@@ -5,6 +5,7 @@ import models
 from datetime import datetime
 import json
 
+
 class HBNBCommand(cmd.Cmd):
     """AirBnB Command Intepreter"""
     prompt = "(hbnb) "
