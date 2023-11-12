@@ -2,16 +2,24 @@
 """Console Intepreter for AirBnB_clone"""
 import cmd
 import models
-
+from datetime import datetime
+import json
 
 class HBNBCommand(cmd.Cmd):
     """AirBnB Command Intepreter"""
-    intro = "Welcome to AirBnB Console. (type help <topic>) for more info "
     prompt = "(hbnb) "
 
-    def do_emptyline(self):
-        print('emptyline()')
-        return cmd.Cmd.emptyline(self)
+    def do_EOF(self, args):
+        """"Quit command to exit the program"""
+        return True
+
+    def do_quit(self, args):
+        """Quit command to exit the program"""
+        return True
+
+    def emptyline(self):
+        """Prints empty line, if no argument is passed"""
+        pass
 
     def do_create(self, args):
         """
@@ -191,14 +199,6 @@ class HBNBCommand(cmd.Cmd):
 
         setattr(obj, attr_name, val)
         models.storage.save()
-
-    def do_quit(self, args):
-        """exits the console. Usage: (Ctrl + D) or (type <quit>)"""
-        return True
-
-    def do_EOF(self, args):
-        """exits the console. Usage: (Ctrl + D) or (type <EOF>)"""
-        return True
 
 
 if __name__ == '__main__':
