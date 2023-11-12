@@ -14,11 +14,19 @@ class HBNBCommand(cmd.Cmd):
         return cmd.Cmd.emptyline(self)
 
     def do_create(self, args):
-        if not args:
+        """
+        Creates a new instance of BaseModel, saves it (to the JSON file),
+        and prints the id.
+        Usage: create <class name>
+        """
+
+        args = args.split()
+
+        if not args or len(args) == 0:
             print("** class name missing **")
             return
 
-        cl_name = args
+        cl_name = args[0]
 
         if cl_name not in models.storage.classes.keys():
             print("** class doesn't exist **")
@@ -35,38 +43,63 @@ class HBNBCommand(cmd.Cmd):
         Usage: show <class name> <id>
         """
         args = args.split()
-        if not args or len(args) < 2:
-            print("** class name or instance id missing **")
+
+        if not args or len(args) == 0:
+            print("** class name missing **")
             return
 
-        cl_name, instance_id = args[0], args[1]
-        k = "{}.{}".format(cl_name, instance_id)
+        cl_name = args[0]
 
-        if k not in models.storage.all():
+        if cl_name not in models.storage.classes.keys():
+            print("** class doesn't exist **")
+            return
+
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+
+        instance_id = args[1]
+        k = "{}.{}".format(cl_name, instance_id)
+        all_instances = models.storage.all()
+
+        if k not in all_instances:
             print("** no instance found **")
             return
-        print(models.storage.all()[k])
+
+        print(all_instances[k])
 
     def do_destroy(self, args):
         """
-            Deletes an instance based on the class name and id
-            (saves the change into the JSON file).
-            Usage: destroy <class name> <id>
+        Deletes an instance based on the class name and id
+        (saves the change into the JSON file).
+        Usage: destroy <class name> <id>
         """
 
         args = args.split()
-        if not args or len(args) < 2:
-            print("** class name or instance id missing **")
+
+        if not args or len(args) == 0:
+            print("** class name missing **")
             return
 
-        cl_name, instance_id = args[0], args[1]
-        k = "{}.{}".format(cl_name, instance_id)
+        cl_name = args[0]
 
-        if k not in models.storage.all():
+        if cl_name not in models.storage.classes.keys():
+            print("** class doesn't exist **")
+            return
+
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+
+        instance_id = args[1]
+        k = "{}.{}".format(cl_name, instance_id)
+        all_instances = models.storage.all()
+
+        if k not in all_instances:
             print("** no instance found **")
             return
 
-        del models.storage.all()[k]
+        del all_instances[k]
         models.storage.save()
 
     def do_all(self, args):
@@ -75,46 +108,96 @@ class HBNBCommand(cmd.Cmd):
         or not on the class name.
         Usage: all [<class name>]
         """
+
         args = args.split()
-        if args and args[0] in models.storage.classes.keys():
-            cl_name = args[0]
-            objs = models.storage.all().values()
-            instances = [str(obj) for obj in objs]
-        elif not args:
-            cl_name = args[0]
-            objs = models.storage.all().values()
-            instances = [str(obj) for obj in objs]
-        else:
+
+        if args and args[0] not in models.storage.classes.keys():
             print("** class doesn't exist **")
             return
+
+        if args and args[0]:
+            cl_name = args[0]
+            objs = models.storage.all().values()
+            show_cl = models.storage.classes[cl_name]
+            instances = [str(obj) for obj in objs if isinstance(obj, show_cl)]
+        else:
+            objs = models.storage.all().values()
+            instances = [str(obj) for obj in objs]
 
         print(instances)
 
     def do_update(self, args):
         """
         Updates an instance based on the class name and id by adding
-        or updating attribute
-        (saves the change into the JSON file).
+        or updating attribute (saves the change into the JSON file).
         Usage: update <class name> <id> <attribute name> "<attribute value>"
         """
+
         args = args.split()
-        if not args or len(args) < 4:
-            print("** class name, instance id, attribute name,**")
+
+        if not args:
+            print("** class name missing **")
             return
 
-        cl_name, instance_id, attr_name, val_str = args
-        k = "{}.{}".format(cl_name, instance_id)
+        cl_name = args[0]
 
-        if k not in models.storage.all():
+        if cl_name not in models.storage.classes.keys():
+            print("** class doesn't exist **")
+            return
+
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+
+        instance_id = args[1]
+        k = "{}.{}".format(cl_name, instance_id)
+        all_instances = models.storage.all()
+
+        if k not in all_instances:
             print("** no instance found **")
             return
 
-        obj = models.storage.all()[k]
-        setattr(obj, attr_name, val_str)
+        if len(args) < 4:
+            print("** attribute name and attribute value are required **")
+            return
+        attr_name, val_str = args[2], args[3]
+        obj = all_instances[k]
+
+        if attr_name == "id":
+            print("** cannot update id **")
+            return
+
+        elif attr_name == "created_at":
+            print("** cannot update created_at **")
+            return
+
+        elif attr_name == "updated_at":
+            print("** cannot update updated_at **")
+            return
+
+        if not hasattr(obj, attr_name):
+            print("** attribute name missing **")
+            return
+
+        if len(args) > 4:
+            print("** only one attribute can be updated at a time **")
+            return
+        try:
+            attr_type = type(getattr(obj, attr_name))
+            val = attr_type(val_str.strip('"'))
+        except (ValueError, TypeError):
+            print("** invalid value for the attribute type **")
+            return
+
+        setattr(obj, attr_name, val)
         models.storage.save()
 
     def do_quit(self, args):
         """exits the console. Usage: (Ctrl + D) or (type <quit>)"""
+        return True
+
+    def do_EOF(self, args):
+        """exits the console. Usage: (Ctrl + D) or (type <EOF>)"""
         return True
 
 
