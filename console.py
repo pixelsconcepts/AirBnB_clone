@@ -4,6 +4,7 @@ import cmd
 import models
 from datetime import datetime
 import json
+import sys
 
 
 class HBNBCommand(cmd.Cmd):
