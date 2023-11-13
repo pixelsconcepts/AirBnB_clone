@@ -2,6 +2,7 @@
 """Console Intepreter for AirBnB_clone"""
 import cmd
 import models
+from models.user import User
 from datetime import datetime
 import json
 import sys
@@ -52,6 +53,7 @@ class HBNBCommand(cmd.Cmd):
         based on the class name and id.
         Usage: show <class name> <id>
         """
+
         args = args.split()
 
         if not args or len(args) == 0:
@@ -134,7 +136,7 @@ class HBNBCommand(cmd.Cmd):
             objs = models.storage.all().values()
             instances = [str(obj) for obj in objs]
 
-        print(instances)
+            print(instances)
 
     def do_update(self, args):
         """
@@ -148,17 +150,13 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-
         cl_name = args[0]
-
         if cl_name not in models.storage.classes.keys():
             print("** class doesn't exist **")
             return
-
         if len(args) < 2:
             print("** instance id missing **")
             return
-
         instance_id = args[1]
         k = "{}.{}".format(cl_name, instance_id)
         all_instances = models.storage.all()
