@@ -2,6 +2,7 @@
 """File storage and persistence"""
 import json
 from models.base_model import BaseModel
+from models.user import User
 
 
 class FileStorage:
@@ -20,7 +21,7 @@ class FileStorage:
     """
     __file_path = "file.json"
     __objects = {}
-    classes = {"BaseModel": BaseModel}
+    classes = {"BaseModel": BaseModel, "User": User}
 
     def all(self):
         """return the dictionary of all objects """
